@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The IQ | Full Assessment</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --bg-dark: #0f172a;
+            --glass: rgba(255, 255, 255, 0.1);
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #0f172a; color: white;
+            scroll-behavior: smooth;
+        }
+
+        .page {
+            display: none; min-height: 100vh;
+            padding: 40px 20px; box-sizing: border-box;
+            flex-direction: column; align-items: center;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .active { display: flex; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px; padding: 40px;
+            width: 100%; max-width: 800px; text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 10vw, 5rem);
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-weight: 800; margin-bottom: 0;
+        }
+
+        /* Quiz Specific Styling */
+        .question-block {
+            text-align: left; background: rgba(0,0,0,0.2);
+            padding: 20px; border-radius: 10px; margin-bottom: 20px;
+        }
+
+        .options-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;
+        }
+
+        .option-label {
+            background: rgba(255,255,255,0.05); padding: 10px;
+            border-radius: 5px; cursor: pointer; transition: 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .option-label:hover { background: rgba(255,255,255,0.15); }
+
+        .btn {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border: none; padding: 15px 40px; border-radius: 30px;
+            color: white; font-weight: bold; cursor: pointer;
+            transition: 0.3s; margin-top: 20px; font-size: 1rem;
+        }
+
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4); }
+
+        input[type="text"], input[type="number"], input[type="date"] {
+            width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px;
+            border: 1px solid #444; background: rgba(0,0,0,0.3); color: white;
+        }
+
+        .progress-container {
+            width: 100%; height: 20px; background: #222;
+            border-radius: 10px; overflow: hidden; margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%; width: 0%; background: linear-gradient(to right, #4ade80, #22c55e);
+            transition: width 1.5s cubic-bezier(0.1, 0, 0.3, 1);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="page-1" class="page active">
+        <h1 class="hero-title">The IQ</h1>
+        <p style="font-size: 1.2rem; opacity: 0.8;">Standardized Cognitive Assessment</p>
+        
+        <div class="glass-card" style="margin-top: 20px;">
+            <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px;">
+                <div><h4>Previous High Score</h4><p>142 (User_Alpha)</p></div>
+                <div><h4>Leaderboard</h4><p>1. Sarah (158)<br>2. James (155)</p></div>
+                <div><h4>Prizes</h4><p>🥇 Gold Medal + $100<br>🥈 Silver Medal</p></div>
+            </div>
+            <button class="btn" onclick="nav(2)">Proceed to Login</button>
+        </div>
+    </div>
+
+    <div id="page-2" class="page" style="background: url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&w=1500&q=80') center/cover;">
+        <div class="glass-card" style="max-width: 450px;">
+            <h2>Registration</h2>
+            <input type="text" id="nameInput" placeholder="Enter Full Name">
+            <input type="number" placeholder="Enter Age">
+            <input type="date">
+            <button class="btn" onclick="nav(3)">Login</button>
+        </div>
+    </div>
+
+    <div id="page-3" class="page">
+        <div class="glass-card">
+            <h2>Rules of Engagement</h2>
+            <div style="text-align: left; display: inline-block;">
+                <p>1. You will face 20 logical questions.</p>
+                <p>2. Patterns, math, and analogies are included.</p>
+                <p>3. Do not use external help.</p>
+                <p>4. Each question carries equal weight.</p>
+                <p>5. No time limit, but focus is key.</p>
+                <p>6. Your final score is shown as a percentage.</p>
+                <p>7. Results are generated instantly upon submission.</p>
+            </div>
+            <br>
+            <button class="btn" onclick="nav(4)">I read the instructions</button>
+        </div>
+    </div>
+
+    <div id="page-4" class="page">
+        <div class="glass-card">
+            <h2>Assessment in Progress</h2>
+            <div id="quiz-form">
+                </div>
+            <button class="btn" onclick="calculateResult()">Submit Quiz</button>
+        </div>
+    </div>
+
+    <div id="page-5" class="page">
+        <div class="glass-card">
+            <h2 id="greetUser">Great Job!</h2>
+            <div id="graph-container">
+                <h1 id="scoreDisplay" style="font-size: 4rem; margin-bottom: 0;">0%</h1>
+                <p>Accuracy Rating</p>
+                <div class="progress-container">
+                    <div id="progressBar" class="progress-fill"></div>
+                </div>
+            </div>
+            <button class="btn" onclick="nav(6)">I am satisfied with the quiz</button>
+        </div>
+    </div>
+
+    <div id="page-6" class="page">
+        <div class="glass-card">
+            <h2>Thank You!</h2>
+            <p>Your IQ report has been saved to the leaderboard.</p>
+            <button class="btn" onclick="location.reload()">Return to Home</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { q: "1. 2, 4, 8, 16... what comes next?", o: ["24", "32", "30", "64"], a: "32" },
+            { q: "2. Which word is the odd one out?", o: ["Apple", "Orange", "Carrot", "Grape"], a: "Carrot" },
+            { q: "3. If 5 + 3 = 28, 9 + 1 = 810, what is 2 + 1?", o: ["13", "31", "21", "12"], a: "13" },
+            { q: "4. Book is to Reading as Fork is to...?", o: ["Drawing", "Eating", "Writing", "Stirring"], a: "Eating" },
+            { q: "5. Which number is prime?", o: ["15", "21", "23", "27"], a: "23" },
+            { q: "6. A is taller than B. B is taller than C. Is A taller than C?", o: ["Yes", "No", "Maybe", "Not enough info"], a: "Yes" },
+            { q: "7. 1, 1, 2, 3, 5, 8... next?", o: ["10", "11", "13", "15"], a: "13" },
+            { q: "8. What is 15% of 200?", o: ["20", "30", "40", "15"], a: "30" },
+            { q: "9. Ocean is to Water as Glacier is to...?", o: ["Dirt", "Ice", "Steam", "Salt"], a: "Ice" },
+            { q: "10. Rearrange 'ERACT' to get a word for a shape.", o: ["Trace", "React", "Crate", "Cater"], a: "Trace" },
+            { q: "11. 100, 90, 81, 73... next?", o: ["66", "64", "65", "60"], a: "66" },
+            { q: "12. If all Bloops are Razzies and all Razzies are Lazzies, are all Bloops Lazzies?", o: ["Yes", "No", "Never", "Sometimes"], a: "Yes" },
+            { q: "13. Which is the largest fraction?", o: ["1/2", "3/4", "5/8", "7/10"], a: "3/4" },
+            { q: "14. How many sides does a Heptagon have?", o: ["6", "7", "8", "9"], a: "7" },
+            { q: "15. Find the missing: A, C, F, J, ...?", o: ["M", "N", "O", "P"], a: "O" },
+            { q: "16. 3, 9, 27... next?", o: ["54", "81", "63", "90"], a: "81" },
+            { q: "17. 'Stressed' spelled backward is 'Desserts'.", o: ["True", "False", "Partially", "Invalid"], a: "True" },
+            { q: "18. How many months have 28 days?", o: ["1", "6", "12", "None"], a: "12" },
+            { q: "19. If you have 3 apples and take away 2, how many do YOU have?", o: ["1", "2", "3", "0"], a: "2" },
+            { q: "20. Brother is to Sister as Uncle is to...?", o: ["Aunt", "Mother", "Niece", "Cousin"], a: "Aunt" }
+        ];
+
+        function loadQuestions() {
+            const container = document.getElementById('quiz-form');
+            questions.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'question-block';
+                div.innerHTML = `<p>${item.q}</p><div class="options-grid">` + 
+                    item.o.map(opt => `
+                        <label class="option-label">
+                            <input type="radio" name="q${index}" value="${opt}"> ${opt}
+                        </label>
+                    `).join('') + `</div>`;
+                container.appendChild(div);
+            });
+        }
+
+        function nav(pageNum) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + pageNum).classList.add('active');
+            if(pageNum === 4) loadQuestions();
+            window.scrollTo(0,0);
+        }
+
+        function calculateResult() {
+            let score = 0;
+            questions.forEach((item, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                if(selected && selected.value === item.a) score++;
+            });
+
+            const percent = (score / questions.length) * 100;
+            const userName = document.getElementById('nameInput').value || "Genius";
+            
+            document.getElementById('greetUser').innerText = `Excellent, ${userName}!`;
+            document.getElementById('scoreDisplay').innerText = percent + "%";
+            nav(5);
+            
+            setTimeout(() => {
+                document.getElementById('progressBar').style.width = percent + "%";
+            }, 300);
+        }
+    </script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The IQ | Advanced Assessment</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --bg-dark: #0f172a;
+            --glass: rgba(255, 255, 255, 0.1);
+            --accent: #4ade80;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: var(--bg-dark); color: white;
+            scroll-behavior: smooth; overflow-x: hidden;
+        }
+
+        /* Enhanced Animations */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(99, 102, 241, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+        }
+
+        .page {
+            display: none; min-height: 100vh;
+            padding: 40px 20px; box-sizing: border-box;
+            flex-direction: column; align-items: center;
+            justify-content: center;
+        }
+
+        .active { 
+            display: flex; 
+            animation: slideUp 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 24px; padding: 40px;
+            width: 100%; max-width: 800px; text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5
